@@ -82,7 +82,8 @@ const App = () => {
     const saved = localStorage.getItem('cart');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed : [];
       } catch {
         return [];
       }
