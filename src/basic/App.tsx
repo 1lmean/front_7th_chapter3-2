@@ -6,12 +6,7 @@ import { useDebounce } from "./hooks/useDebounce";
 import { useProducts, ProductWithUI } from "./hooks/useProducts";
 import { useCoupons } from "./hooks/useCoupons";
 import { useCart } from "./hooks/useCart";
-
-interface Notification {
-  id: string;
-  message: string;
-  type: "error" | "success" | "warning";
-}
+import { useNotification } from "./hooks/useNotification";
 
 const App = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
@@ -33,9 +28,10 @@ const App = () => {
     removeCoupon,
     completeOrder: completeOrderAction,
   } = useCart(products);
+  const { notifications, addNotification, removeNotification } =
+    useNotification();
 
   const [isAdmin, setIsAdmin] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showCouponForm, setShowCouponForm] = useState(false);
   const [activeTab, setActiveTab] = useState<"products" | "coupons">(
     "products"
@@ -66,18 +62,6 @@ const App = () => {
   const getRemainingStockForProduct = (product: Product): number => {
     return getRemainingStock(product, cart);
   };
-
-  const addNotification = useCallback(
-    (message: string, type: "error" | "success" | "warning" = "success") => {
-      const id = Date.now().toString();
-      setNotifications((prev) => [...prev, { id, message, type }]);
-
-      setTimeout(() => {
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-      }, 3000);
-    },
-    []
-  );
 
   // useCart 래퍼 함수들 (notification 처리)
   const addToCart = useCallback(
@@ -207,11 +191,7 @@ const App = () => {
             >
               <span className="mr-2">{notif.message}</span>
               <button
-                onClick={() =>
-                  setNotifications((prev) =>
-                    prev.filter((n) => n.id !== notif.id)
-                  )
-                }
+                onClick={() => removeNotification(notif.id)}
                 className="text-white hover:text-gray-200"
               >
                 <svg
@@ -909,7 +889,8 @@ const App = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredProducts.map((product) => {
-                      const remainingStock = getRemainingStockForProduct(product);
+                      const remainingStock =
+                        getRemainingStockForProduct(product);
 
                       return (
                         <div
