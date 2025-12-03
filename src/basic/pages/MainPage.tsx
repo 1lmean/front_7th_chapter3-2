@@ -1,9 +1,9 @@
 import { useEffect, useCallback } from "react";
 import { Coupon, Product } from "../../types";
-import { calculateItemTotal, getRemainingStock } from "../models/cart";
+import { getRemainingStock } from "../models/cart";
 import { ProductWithUI } from "../hooks/useProducts";
 import { useCart } from "../hooks/useCart";
-import { ProductList } from "../features";
+import { CartList, ProductList } from "../features";
 
 interface MainPageProps {
   // 상품 관련
@@ -98,7 +98,7 @@ export const MainPage = ({
 
       <div className="lg:col-span-1">
         <div className="sticky top-24 space-y-4">
-          <section className="bg-white rounded-lg border border-gray-200 p-4">
+          {/* <section className="bg-white rounded-lg border border-gray-200 p-4">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
               <svg
                 className="w-5 h-5 mr-2"
@@ -208,7 +208,12 @@ export const MainPage = ({
                 })}
               </div>
             )}
-          </section>
+          </section> */}
+          <CartList
+            cart={cart}
+            removeFromCart={removeFromCart}
+            updateQuantity={updateQuantity}
+          />
 
           {cart.length > 0 && (
             <>
