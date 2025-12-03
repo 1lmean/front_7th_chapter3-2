@@ -2,7 +2,7 @@ import { CartItem as CartItemType } from "../../../types";
 
 interface CartItemProps {
   item: CartItemType;
-  itemTotal: number;  // 계산된 값을 직접 받음
+  itemTotal: number; // 계산된 값을 직접 받음
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
 }

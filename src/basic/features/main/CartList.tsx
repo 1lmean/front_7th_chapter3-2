@@ -1,5 +1,5 @@
 import { CartItem as CartItemType } from "../../../types";
-import { calculateItemTotal } from "../../models/cart";  // 직접 import
+import { calculateItemTotal } from "../../models/cart"; // 직접 import
 import { CartItem } from "./CartItem";
 
 interface CartListProps {
@@ -55,7 +55,7 @@ export const CartList = ({
             <CartItem
               key={item.product.id}
               item={item}
-              itemTotal={calculateItemTotal(item, cart)}  // 여기서 계산해서 전달
+              itemTotal={calculateItemTotal(item, cart)} // 여기서 계산해서 전달
               removeFromCart={removeFromCart}
               updateQuantity={updateQuantity}
             />
