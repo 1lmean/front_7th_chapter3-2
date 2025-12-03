@@ -1,6 +1,7 @@
-import { Product } from "../../../types";
 import { formatPrice } from "../../utils/formatter";
 import { ProductWithUI } from "../../hooks/useProducts";
+import { Button } from "../../components/Button";
+import { Badge } from "../../components/Badge";
 
 interface ProductCardProps {
   product: ProductWithUI;
@@ -33,14 +34,14 @@ export const ProductCard = ({
           </svg>
         </div>
         {product.isRecommended && (
-          <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+          <Badge variant="red" position="top-right">
             BEST
-          </span>
+          </Badge>
         )}
         {product.discounts.length > 0 && (
-          <span className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-1 rounded">
+          <Badge variant="orange" position="top-left">
             ~{Math.max(...product.discounts.map((d) => d.rate)) * 100}%
-          </span>
+          </Badge>
         )}
       </div>
 
@@ -79,19 +80,14 @@ export const ProductCard = ({
         </div>
 
         {/* 장바구니 버튼 */}
-        <button
+        <Button
           onClick={() => onAddToCart(product)}
           disabled={remainingStock <= 0}
-          className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
-            remainingStock <= 0
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-gray-900 text-white hover:bg-gray-800"
-          }`}
+          fullWidth
         >
           {remainingStock <= 0 ? "품절" : "장바구니 담기"}
-        </button>
+        </Button>
       </div>
     </div>
   );
 };
-
