@@ -1,75 +1,59 @@
-interface HeaderProps {
-  isAdmin: boolean;
-  setIsAdmin: (value: boolean) => void;
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  cartLength: number;
-  totalItemCount: number;
+import React from "react";
+
+interface HeaderRootProps {
+  children: React.ReactNode;
 }
 
-export const Header = ({
-  isAdmin,
-  setIsAdmin,
-  searchTerm,
-  setSearchTerm,
-  cartLength,
-  totalItemCount,
-}: HeaderProps) => {
+interface AdminToggleProps {
+  isAdmin: boolean;
+  onToggle: () => void;
+}
+
+// Header.Root - 전체 레이아웃
+const HeaderRoot = ({ children }: HeaderRootProps) => {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center flex-1">
-            <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>
-            {!isAdmin && (
-              <div className="ml-8 flex-1 max-w-md">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="상품 검색..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-              </div>
-            )}
-          </div>
-          <nav className="flex items-center space-x-4">
-            <button
-              onClick={() => setIsAdmin(!isAdmin)}
-              className={`px-3 py-1.5 text-sm rounded transition-colors ${
-                isAdmin
-                  ? "bg-gray-800 text-white"
-                  : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              {isAdmin ? "쇼핑몰로 돌아가기" : "관리자 페이지로"}
-            </button>
-            {!isAdmin && (
-              <div className="relative">
-                <svg
-                  className="w-6 h-6 text-gray-700"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-                {cartLength > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                    {totalItemCount}
-                  </span>
-                )}
-              </div>
-            )}
-          </nav>
-        </div>
+        <div className="flex justify-between items-center h-16">{children}</div>
       </div>
     </header>
   );
 };
 
+// Header.Logo
+const HeaderLogo = () => {
+  return <h1 className="text-xl font-semibold text-gray-800">SHOP</h1>;
+};
+
+// Header.Left - 왼쪽 영역 (로고 + 검색창)
+const HeaderLeft = ({ children }: { children: React.ReactNode }) => {
+  return <div className="flex items-center flex-1">{children}</div>;
+};
+
+// Header.Right - 오른쪽 영역 (관리자 토글 + 장바구니)
+const HeaderRight = ({ children }: { children: React.ReactNode }) => {
+  return <nav className="flex items-center space-x-4">{children}</nav>;
+};
+
+// Header.AdminToggle - 관리자 토글 버튼 (Header 내부 소유)
+const HeaderAdminToggle = ({ isAdmin, onToggle }: AdminToggleProps) => {
+  return (
+    <button
+      onClick={onToggle}
+      className={`px-3 py-1.5 text-sm rounded transition-colors ${
+        isAdmin ? "bg-gray-800 text-white" : "text-gray-600 hover:text-gray-900"
+      }`}
+    >
+      {isAdmin ? "쇼핑몰로 돌아가기" : "관리자 페이지로"}
+    </button>
+  );
+};
+
+// Compound Component Export
+export const Header = {
+  Root: HeaderRoot,
+  Logo: HeaderLogo,
+  Left: HeaderLeft,
+  Right: HeaderRight,
+  AdminToggle: HeaderAdminToggle,
+};
