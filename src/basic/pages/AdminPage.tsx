@@ -89,14 +89,24 @@ export const AdminPage = ({
             onAddNew={productForm.openNewForm}
           />
           {productForm.showForm && (
-            <ProductForm
-              editingProduct={productForm.editingProduct}
+            <ProductForm.Root
               formData={productForm.formData}
               setFormData={productForm.setFormData}
               onSubmit={productForm.handleSubmit}
-              resetForm={productForm.resetForm}
               addNotification={addNotification}
-            />
+            >
+              <ProductForm.Title>
+                {productForm.mode === "create" ? "새 상품 추가" : "상품 수정"}
+              </ProductForm.Title>
+              <ProductForm.Fields />
+              <ProductForm.Discounts />
+              <ProductForm.Actions>
+                <ProductForm.CancelButton onClick={productForm.resetForm} />
+                <ProductForm.SubmitButton>
+                  {productForm.mode === "create" ? "추가" : "수정"}
+                </ProductForm.SubmitButton>
+              </ProductForm.Actions>
+            </ProductForm.Root>
           )}
         </>
       )}

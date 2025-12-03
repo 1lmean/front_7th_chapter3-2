@@ -9,6 +9,8 @@ export interface ProductFormData {
   discounts: Array<{ quantity: number; rate: number }>;
 }
 
+export type FormMode = "create" | "edit";
+
 const initialFormState: ProductFormData = {
   name: "",
   price: 0,
@@ -28,23 +30,27 @@ export const useProductForm = ({
   updateProduct,
 }: UseProductFormProps) => {
   const [showForm, setShowForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [mode, setMode] = useState<FormMode>("create");
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProductFormData>(initialFormState);
 
   const resetForm = useCallback(() => {
     setFormData(initialFormState);
-    setEditingProduct(null);
+    setEditingProductId(null);
+    setMode("create");
     setShowForm(false);
   }, []);
 
   const openNewForm = useCallback(() => {
-    setEditingProduct("new");
+    setMode("create");
+    setEditingProductId(null);
     setFormData(initialFormState);
     setShowForm(true);
   }, []);
 
   const startEdit = useCallback((product: ProductWithUI) => {
-    setEditingProduct(product.id);
+    setMode("edit");
+    setEditingProductId(product.id);
     setFormData({
       name: product.name,
       price: product.price,
@@ -58,20 +64,20 @@ export const useProductForm = ({
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      if (editingProduct && editingProduct !== "new") {
-        updateProduct(editingProduct, formData);
+      if (mode === "edit" && editingProductId) {
+        updateProduct(editingProductId, formData);
       } else {
         addProduct(formData);
       }
       resetForm();
     },
-    [editingProduct, formData, addProduct, updateProduct, resetForm]
+    [mode, editingProductId, formData, addProduct, updateProduct, resetForm]
   );
 
   return {
     // 상태
     showForm,
-    editingProduct,
+    mode,
     formData,
     // setter
     setFormData,
