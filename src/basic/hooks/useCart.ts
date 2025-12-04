@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { CartItem, Coupon, Product } from "../../types";
 import {
   addItemToCart,
@@ -8,6 +8,7 @@ import {
   calculateCartTotal,
   getTotalItemCount,
 } from "../models/cart";
+import { useLocalStorage } from "./useLocalStorage";
 
 export interface CartResult {
   success: boolean;
@@ -21,29 +22,8 @@ export interface CartResult {
  * products를 받아서 재고 체크에 사용
  */
 export function useCart(products: Product[]) {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
-    }
-    return [];
-  });
-
+  const [cart, setCart] = useLocalStorage<CartItem[]>("cart", []);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-
-  // localStorage 동기화
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cart]);
 
   // 장바구니에 상품 추가
   const addToCart = useCallback(
@@ -153,4 +133,3 @@ export function useCart(products: Product[]) {
     completeOrder,
   };
 }
-

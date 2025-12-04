@@ -1,6 +1,7 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { Product } from "../../types";
 import { initialProducts } from "../constants";
+import { useLocalStorage } from "./useLocalStorage";
 
 export interface ProductWithUI extends Product {
   description?: string;
@@ -8,22 +9,10 @@ export interface ProductWithUI extends Product {
 }
 
 export function useProducts() {
-  const [products, setProducts] = useState<ProductWithUI[]>(() => {
-    const saved = localStorage.getItem("products");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialProducts;
-      }
-    }
-    return initialProducts;
-  });
-
-  // localStorage 동기화
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(products));
-  }, [products]);
+  const [products, setProducts] = useLocalStorage<ProductWithUI[]>(
+    "products",
+    initialProducts
+  );
 
   const addProduct = useCallback((newProduct: Omit<ProductWithUI, "id">) => {
     const product: ProductWithUI = {

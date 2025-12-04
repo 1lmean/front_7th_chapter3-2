@@ -1,6 +1,7 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { Coupon } from "../../types";
 import { initialCoupons } from "../constants";
+import { useLocalStorage } from "./useLocalStorage";
 
 /**
  * useCoupons - 쿠폰 목록 관리 훅 (CRUD)
@@ -9,22 +10,10 @@ import { initialCoupons } from "../constants";
  * 주의: selectedCoupon, applyCoupon은 cart와 관련되므로 App 레벨에서 관리
  */
 export function useCoupons() {
-  const [coupons, setCoupons] = useState<Coupon[]>(() => {
-    const saved = localStorage.getItem("coupons");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return initialCoupons;
-      }
-    }
-    return initialCoupons;
-  });
-
-  // localStorage 동기화
-  useEffect(() => {
-    localStorage.setItem("coupons", JSON.stringify(coupons));
-  }, [coupons]);
+  const [coupons, setCoupons] = useLocalStorage<Coupon[]>(
+    "coupons",
+    initialCoupons
+  );
 
   // 쿠폰 추가
   const addCoupon = useCallback(
