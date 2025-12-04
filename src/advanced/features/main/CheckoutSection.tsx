@@ -4,8 +4,10 @@ import { useNotificationStore } from "../../store/useNotificationStore";
 
 export const CheckoutSection = () => {
   // Store에서 상태 및 액션 가져오기
+  // cart와 selectedCoupon을 직접 구독하여 리렌더링 보장
+  const cart = useCartStore((state) => state.cart);
+  const selectedCoupon = useCartStore((state) => state.selectedCoupon);
   const {
-    selectedCoupon,
     getTotals,
     applyCoupon: applyCouponAction,
     removeCoupon: removeCouponAction,
@@ -14,7 +16,7 @@ export const CheckoutSection = () => {
   const { coupons } = useCouponStore();
   const { addNotification } = useNotificationStore();
 
-  // totals 계산
+  // totals 계산 - cart와 selectedCoupon이 변경될 때마다 재계산
   const totals = getTotals();
 
   // Notification 래퍼 함수들
@@ -76,13 +78,7 @@ export const CheckoutSection = () => {
           {totals.totalBeforeDiscount - totals.totalAfterDiscount > 0 && (
             <div className="flex justify-between text-red-500">
               <span>할인 금액</span>
-              <span>
-                -
-                {(
-                  totals.totalBeforeDiscount - totals.totalAfterDiscount
-                ).toLocaleString()}
-                원
-              </span>
+              <span>-{(totals.totalBeforeDiscount - totals.totalAfterDiscount).toLocaleString()}원</span>
             </div>
           )}
           <div className="flex justify-between py-2 border-t border-gray-200">

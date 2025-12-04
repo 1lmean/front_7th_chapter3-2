@@ -61,10 +61,12 @@ export const calculateCartTotal = (
   let totalBeforeDiscount = 0;
   let totalAfterDiscount = 0;
 
+  // 원래 코드처럼 cart를 클로저로 사용
   cart.forEach((item) => {
     const itemPrice = item.product.price * item.quantity;
     totalBeforeDiscount += itemPrice;
-    totalAfterDiscount += calculateItemTotal(item, cart); // cart 전달!
+    // cart를 파라미터로 전달 (원래 코드는 클로저로 접근하지만, 순수 함수로 만들기 위해 파라미터 전달)
+    totalAfterDiscount += calculateItemTotal(item, cart);
   });
 
   // 쿠폰 적용

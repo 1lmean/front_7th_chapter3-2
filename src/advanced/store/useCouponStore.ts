@@ -6,6 +6,7 @@ interface CouponState {
   coupons: Coupon[];
   addCoupon: (coupon: Coupon) => { success: boolean; message: string };
   deleteCoupon: (code: string) => { success: boolean; message: string };
+  reset: () => void;
 }
 
 const initialCoupons: Coupon[] = [
@@ -42,6 +43,10 @@ export const useCouponStore = create<CouponState>()(
           coupons: state.coupons.filter((c) => c.code !== code),
         }));
         return { success: true, message: "쿠폰이 삭제되었습니다." };
+      },
+
+      reset: () => {
+        set({ coupons: initialCoupons });
       },
     }),
     { name: "coupons" }

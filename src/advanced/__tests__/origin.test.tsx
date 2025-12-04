@@ -11,7 +11,6 @@ import "../../setupTests";
 import "../testSetup"; // Zustand store 초기화 설정
 
 describe("쇼핑몰 앱 통합 테스트", () => {
-
   describe("고객 쇼핑 플로우", () => {
     test("상품을 검색하고 장바구니에 추가할 수 있다", async () => {
       render(<App />);

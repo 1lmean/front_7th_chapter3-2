@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Header } from "./components/Header";
 import { ToastContainer } from "./components/ToastContainer";
-import { CartIcon } from "./features";
+import { CartIcon, SearchInput } from "./features";
 import { MainPage } from "./pages/MainPage";
 import { AdminPage } from "./pages/AdminPage";
 import { useCartStore } from "./store/useCartStore";
 
 const App = () => {
   const [isAdmin, setIsAdmin] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const { getTotalItemCount } = useCartStore();
 
   return (
@@ -17,6 +18,9 @@ const App = () => {
       <Header.Root>
         <Header.Left>
           <Header.Logo />
+          {!isAdmin && (
+            <SearchInput value={searchTerm} onChange={setSearchTerm} />
+          )}
         </Header.Left>
         <Header.Right>
           <Header.AdminToggle
@@ -28,7 +32,7 @@ const App = () => {
       </Header.Root>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {isAdmin ? <AdminPage /> : <MainPage />}
+        {isAdmin ? <AdminPage /> : <MainPage searchTerm={searchTerm} />}
       </main>
     </div>
   );

@@ -1,14 +1,18 @@
 import { CartList, ProductList, CheckoutSection } from "../features";
 import { useCartStore } from "../store/useCartStore";
 
-export const MainPage = () => {
+interface MainPageProps {
+  searchTerm: string;
+}
+
+export const MainPage = ({ searchTerm }: MainPageProps) => {
   // cart가 비어있는지 확인하기 위해 가져오기
   const { cart } = useCartStore();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <div className="lg:col-span-3">
-        <ProductList />
+        <ProductList searchTerm={searchTerm} />
       </div>
 
       <div className="lg:col-span-1">

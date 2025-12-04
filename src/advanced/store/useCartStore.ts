@@ -9,6 +9,7 @@ import {
   getRemainingStock,
   getTotalItemCount,
 } from "../models/cart";
+import { useProductStore } from "./useProductStore";
 
 interface CartState {
   cart: CartItem[];
@@ -24,6 +25,7 @@ interface CartState {
   applyCoupon: (coupon: Coupon) => { success: boolean; message: string };
   removeCoupon: () => void;
   completeOrder: () => { success: boolean; message: string };
+  reset: () => void;
 
   // Computed (getter처럼 사용)
   getTotals: () => { totalBeforeDiscount: number; totalAfterDiscount: number };
@@ -69,7 +71,21 @@ export const useCartStore = create<CartState>()(
           return null;
         }
 
-        // products는 외부에서 가져와야 함 (store 분리)
+        // useProductStore에서 products 가져오기
+        const { products } = useProductStore.getState();
+        const product = products.find((p) => p.id === productId);
+        if (!product) {
+          return { success: false, message: "상품을 찾을 수 없습니다." };
+        }
+
+        const maxStock = product.stock;
+        if (newQuantity > maxStock) {
+          return {
+            success: false,
+            message: `재고는 ${maxStock}개까지만 있습니다.`,
+          };
+        }
+
         set((state) => ({
           cart: updateCartItemQuantity(state.cart, productId, newQuantity),
         }));
@@ -77,12 +93,11 @@ export const useCartStore = create<CartState>()(
       },
 
       applyCoupon: (coupon) => {
-        const totals = get().getTotals();
+        const { cart } = get();
+        // 쿠폰 없이 계산 (basic과 동일)
+        const currentTotal = calculateCartTotal(cart, null).totalAfterDiscount;
 
-        if (
-          totals.totalAfterDiscount < 10000 &&
-          coupon.discountType === "percentage"
-        ) {
+        if (currentTotal < 10000 && coupon.discountType === "percentage") {
           return {
             success: false,
             message: "percentage 쿠폰은 10,000원 이상 구매 시 사용 가능합니다.",
@@ -112,6 +127,10 @@ export const useCartStore = create<CartState>()(
       getTotalItemCount: () => getTotalItemCount(get().cart),
 
       getRemainingStock: (product) => getRemainingStock(product, get().cart),
+
+      reset: () => {
+        set({ cart: [], selectedCoupon: null });
+      },
     }),
     {
       name: "cart",

@@ -12,6 +12,7 @@ interface ProductState {
   addProduct: (product: Omit<ProductWithUI, "id">) => void;
   updateProduct: (id: string, updates: Partial<ProductWithUI>) => void;
   deleteProduct: (id: string) => void;
+  reset: () => void;
 }
 
 const initialProducts: ProductWithUI[] = [
@@ -72,6 +73,10 @@ export const useProductStore = create<ProductState>()(
         set((state) => ({
           products: state.products.filter((p) => p.id !== id),
         })),
+
+      reset: () => {
+        set({ products: initialProducts });
+      },
     }),
     { name: "products" } // localStorage key
   )
